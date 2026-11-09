@@ -31,10 +31,10 @@ jobs:
       - name: Build debug APK
         run: gradle :app:assembleDebug --stacktrace
       - name: Rename APK
-        run: cp app/build/outputs/apk/debug/app-debug.apk SmartDialer-v1.0.1-debug.apk
+        run: cp app/build/outputs/apk/debug/app-debug.apk SmartDialer-v1.0.2-debug.apk
       - name: Upload APK as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: SmartDialer-v1.0.1-debug-apk
-          path: SmartDialer-v1.0.1-debug.apk
+          name: SmartDialer-v1.0.2-debug-apk
+          path: SmartDialer-v1.0.2-debug.apk
           retention-days: 90
