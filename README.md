@@ -1,0 +1,66 @@
+# Smart Dialer
+
+একটাই ডায়ালার থেকে SIM কল আর বাংলাদেশের আইপি কলিং অ্যাপগুলোতে কল — নম্বর ডায়াল করে পছন্দের প্রোভাইডারে ট্যাপ করলেই কল যাবে।
+
+**Version: v1.0.0 (versionCode 1) — first release, local code only, not pushed yet.**
+
+## কী আছে
+
+- ডার্ক ডায়ালার — উপরে Auto-call পিল (Direct Call ON/OFF), তার নিচে প্রোভাইডার লিস্ট, ডায়াল প্যাড, নিচে Dialer / Recents / Contacts ট্যাব
+- ডিফল্ট প্রোভাইডার সেভ থাকে — প্রোভাইডার কার্ডে লং-প্রেস করলেই ডিফল্ট হয়, সেটিংস থেকেও বদলানো যায়
+- Recents — কল করলেই সবার উপরে এন্ট্রি যোগ হয়, কল শেষ হলে সময় (duration) আপডেট হয়
+- Contacts — ফোনের কন্টাক্ট, সার্চ, ফেভারিট (স্টার), ফেভারিটরা উপরের সেকশনে থাকে
+- নম্বর লিখলেই কন্টাক্ট সাজেশন আসে — সাজেশনে ট্যাপ করলে পুরো নম্বর বসে
+- Original SIM এর জন্য SIM 1 / SIM 2 বাছাই
+- কল বাটন — সিলেক্ট করা প্রোভাইডার দিয়ে কল যায়
+
+## প্রোভাইডার (৮টা, এই ক্রমে)
+
+| # | প্রোভাইডার | প্যাকেজ | অবস্থা |
+|---|---|---|---|
+| 1 | Original SIM (Normal Dialer) | সিস্টেম ডায়ালার | — |
+| 2 | Brilliant (InterCloud) | com.brilliant.connect.com.bd | যাচাই করা |
+| 3 | Amber IT (Amber IT IP Phone) | com.amberit.dialer | যাচাই করা |
+| 4 | OrbiTalk (Race Online) | com.orbitalk.app | যাচাই করা |
+| 5 | BTCL Alaap (BTCL) | com.alaap.app | যাচাই করা |
+| 6 | Dial (Link3) | com.beint.dial | যাচাই করা |
+| 7 | AgniTalk (Agni Systems) | com.agni.app | যাচাই করা |
+| 8 | Alo Talk (Alo Communications) | যাচাই হয়নি | Play Store সার্চ দিয়ে খোলে |
+
+BDCOM Kotha (09666) রাখা হয়নি — Play Store-এ এখন যে Kotha আছে সেটা আলাদা একটা সোশ্যাল অ্যাপ, IP কলিং অ্যাপ না।
+
+## আইপি কল নিয়ে সত্যি কথাটা
+
+Android অন্য কোম্পানির আইপি অ্যাপের ভেতরে সরাসরি কল লাগাতে দেয় না। তাই আইপি প্রোভাইডারে ট্যাপ করলে Smart Dialer ওই অ্যাপটা নম্বরসহ খুলে দেয় (ACTION_DIAL + setPackage) — তারপর ওই অ্যাপে একবার কল চাপতে হয়। অ্যাপটা ইনস্টল না থাকলে Play Store খুলবে। Alo Talk-এর প্যাকেজ নাম যাচাই করা যায়নি বলে ওটাতে ট্যাপ করলে Play Store সার্চ খুলবে।
+
+শুধু Original SIM দিয়েই Smart Dialer থেকে সরাসরি কল যায়। Auto-call ON থাকলে ACTION_CALL (SIM 1/2 বাছাইসহ), OFF থাকলে সিস্টেম ডায়ালার খুলে নম্বর বসিয়ে দেয়।
+
+## পারমিশন
+
+- CALL_PHONE — SIM দিয়ে সরাসরি কল
+- READ_CONTACTS — কন্টাক্ট, সাজেশন
+- READ_PHONE_STATE — SIM 1/2 বাছাই আর কলের সময় মাপা
+
+READ_CALL_LOG নেওয়া হয়নি — Recents Smart Dialer নিজেই লগ করে, সিস্টেম কল লগ পড়ে না। INTERNET পারমিশনও নেই — অ্যাপটা কিছুই সার্ভারে পাঠায় না।
+
+## ফোনে পরীক্ষা যেভাবে করবে
+
+1. APK ইনস্টল করো, তিনটা পারমিশন দাও (Phone, Contacts, Phone state)
+2. নম্বর ডায়াল করে Brilliant-এ ট্যাপ করো — Brilliant ইনস্টল থাকলে নম্বরসহ খুলবে, না থাকলে Play Store খুলবে
+3. Original SIM + Auto-call ON দিয়ে কল করো — সরাসরি কল যাবে; OFF করলে ডায়ালার খুলবে
+4. একটা প্রোভাইডারে লং-প্রেস করো — ডিফল্ট হবে, কার্ডে "ডিফল্ট" লেখা আসবে
+5. কল শেষে Recents ট্যাবে দেখো — এন্ট্রি সবার উপরে, duration সহ
+6. Contacts ট্যাবে স্টার চাপো — ফেভারিট সেকশনে উঠবে
+7. নম্বর লেখার সময় সাজেশন আসে কি না দেখো
+8. SIM 1/2 বাছাই — দুটো SIM থাকলে দুটো দিয়েই কল করে দেখো (সিস্টেমের অ্যাকাউন্ট অর্ডারের উপর নির্ভর করে, বেস্ট-এফোর্ট)
+
+## বিল্ড
+
+- Kotlin, AndroidX, Material 3, minSdk 24, targetSdk 34, compileSdk 34
+- AGP 8.6.1, Kotlin 1.9.24, Gradle 8.7, JDK 21 (CI)
+- Debug signing: একটাই স্থায়ী debug keystore (PKCS12, RSA 2048, 10000 দিন) — base64 আকারে `app/debug.keystore.b64`-এ আছে, বিল্ডের সময় ডিকোড হয়। এটা DEBUG-এর চাবি, রিলিজে ব্যবহার করবে না।
+- Workflow ফাইল রেপোতে নেই — GitHub App-এর Workflows পারমিশন নেই বলে `.github/workflows/android.yml` ব্রাউজার দিয়ে আগে যোগ করতে হবে, তারপর কোড পুশ।
+
+## Version history
+
+- **v1.0.0 (versionCode 1) — 2026-11-09:** প্রথম ভার্সন। ৮ প্রোভাইডার, ডিফল্ট প্রোভাইডার, Recents, Contacts + ফেভারিট, কন্টাক্ট সাজেশন, SIM 1/2 বাছাই, Auto-call ON/OFF।

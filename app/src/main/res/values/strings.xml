@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Smart Dialer</string>
+    <string name="auto_call_on_pill">Auto-call: ON (Direct Call)</string>
+    <string name="auto_call_off_pill">Auto-call: OFF</string>
+    <string name="auto_call_on">Auto-call চালু হয়েছে</string>
+    <string name="auto_call_off">Auto-call বন্ধ হয়েছে</string>
+    <string name="default_route">ডিফল্ট: %1$s</string>
+    <string name="default_set">ডিফল্ট হয়েছে: %1$s</string>
+    <string name="enter_number_first">প্রথমে নম্বর লেখো</string>
+    <string name="number_hint">নম্বর লেখো</string>
+    <string name="call">কল</string>
+    <string name="sim_1">SIM 1</string>
+    <string name="sim_2">SIM 2</string>
+    <string name="tab_dialer">Dialer</string>
+    <string name="tab_recents">Recents</string>
+    <string name="tab_contacts">Contacts</string>
+    <string name="search_contacts">কন্টাক্ট খুঁজো</string>
+    <string name="fav_header">ফেভারিট</string>
+    <string name="all_header">সব কন্টাক্ট</string>
+    <string name="fav_added">ফেভারিটে যোগ হয়েছে: %1$s</string>
+    <string name="fav_removed">ফেভারিট থেকে সরানো হয়েছে: %1$s</string>
+    <string name="no_recents">এখনো কোনো কল নেই। নম্বর ডায়াল করে কল করলেই এখানে আসবে।</string>
+    <string name="no_contacts">কোনো কন্টাক্ট পাওয়া যায়নি। কন্টাক্ট পারমিশন দিলে এখানে আসবে।</string>
+    <string name="clear_recents">মুছে ফেলো</string>
+    <string name="settings_title">সেটিংস</string>
+    <string name="settings_default">ডিফল্ট প্রোভাইডার</string>
+    <string name="settings_sim">SIM বাছাই (Original SIM এর জন্য)</string>
+    <string name="settings_auto_call">Auto-call (Direct Call)</string>
+    <string name="settings_note">আইপি কল নিয়ে একটা কথা: Android অন্য কোম্পানির আইপি অ্যাপের ভেতরে সরাসরি কল লাগাতে দেয় না। আইপি প্রোভাইডারে ট্যাপ করলে ওই অ্যাপটা নম্বরসহ খুলবে, তারপর ওখানে কল চাপতে হবে। শুধু Original SIM দিয়েই Smart Dialer থেকে সরাসরি কল যায়।</string>
+    <string name="save">সেভ করো</string>
+    <string name="cancel">বাতিল</string>
+    <string name="default_badge">ডিফল্ট</string>
+</resources>

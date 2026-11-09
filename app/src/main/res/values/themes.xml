@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.SmartDialer" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="android:windowBackground">@color/sd_bg</item>
+        <item name="android:statusBarColor">@color/sd_bg</item>
+        <item name="android:navigationBarColor">@color/sd_bg</item>
+        <item name="colorPrimary">@color/sd_accent</item>
+        <item name="colorOnPrimary">@color/sd_on_accent</item>
+        <item name="colorSurface">@color/sd_card</item>
+        <item name="colorOnSurface">@color/sd_text</item>
+    </style>
+</resources>
