@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- v1.0.1 fix: the dial pad + call row are OUTSIDE the weighted FrameLayout,
+     so the provider list can never push them off-screen again. The provider
+     list takes whatever space is left and scrolls internally. Dial buttons
+     are fixed-size TextViews (never android.widget.Button: Material3 tints
+     Button backgrounds with colorPrimary green). -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,7 +15,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingStart="16dp"
-        android:paddingTop="12dp"
+        android:paddingTop="8dp"
         android:paddingEnd="16dp"
         android:paddingBottom="4dp">
 
@@ -58,6 +63,9 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
+            <!-- Only weighted child in dialerView: takes the leftover space
+                 and scrolls. Capped by the fixed dial pad + call row below,
+                 never the other way round. -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/providerList"
                 android:layout_width="match_parent"
@@ -76,23 +84,31 @@
                 android:paddingBottom="4dp"
                 android:visibility="gone">
 
-                <Button
+                <!-- TextView, NOT Button: Button backgrounds get tinted
+                     green by the Material3 theme (colorPrimary). -->
+                <TextView
                     android:id="@+id/sim1Button"
                     android:layout_width="0dp"
                     android:layout_height="40dp"
                     android:layout_weight="1"
                     android:background="@drawable/bg_card_selected"
+                    android:gravity="center"
                     android:text="@string/sim_1"
-                    android:textColor="@color/sd_text" />
+                    android:textColor="@color/sd_accent"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
 
-                <Button
+                <TextView
                     android:id="@+id/sim2Button"
                     android:layout_width="0dp"
                     android:layout_height="40dp"
                     android:layout_weight="1"
                     android:background="@drawable/bg_card"
+                    android:gravity="center"
                     android:text="@string/sim_2"
-                    android:textColor="@color/sd_text" />
+                    android:textColor="@color/sd_text"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
 
             </LinearLayout>
 
@@ -102,10 +118,10 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:hint="@string/number_hint"
-                android:padding="8dp"
+                android:padding="4dp"
                 android:textColor="@color/sd_text"
                 android:textColorHint="@color/sd_text_secondary"
-                android:textSize="28sp" />
+                android:textSize="26sp" />
 
             <HorizontalScrollView
                 android:id="@+id/suggestionScroll"
@@ -124,48 +140,6 @@
 
             </HorizontalScrollView>
 
-            <GridLayout
-                android:id="@+id/dialGrid"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:columnCount="3"
-                android:paddingStart="24dp"
-                android:paddingEnd="24dp" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:padding="8dp">
-
-                <ImageButton
-                    android:id="@+id/backspaceButton"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:background="@drawable/bg_dial_button"
-                    android:contentDescription="@string/cancel"
-                    android:src="@android:drawable/ic_input_delete" />
-
-                <Button
-                    android:id="@+id/callButton"
-                    android:layout_width="0dp"
-                    android:layout_height="56dp"
-                    android:layout_weight="1"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:background="@drawable/bg_call_button"
-                    android:text="@string/call"
-                    android:textColor="@color/sd_on_accent"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
-
-                <View
-                    android:layout_width="48dp"
-                    android:layout_height="48dp" />
-
-            </LinearLayout>
-
         </LinearLayout>
 
         <LinearLayout
@@ -175,13 +149,15 @@
             android:orientation="vertical"
             android:visibility="gone">
 
-            <Button
+            <TextView
                 android:id="@+id/clearRecentsButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:layout_margin="12dp"
                 android:background="@drawable/bg_card"
+                android:gravity="center"
+                android:padding="10dp"
                 android:text="@string/clear_recents"
                 android:textColor="@color/sd_danger" />
 
@@ -277,41 +253,110 @@
 
     </FrameLayout>
 
+    <!-- Dial pad + call row live OUTSIDE the weighted area, so they are
+         always on screen. Hidden on Recents/Contacts tabs. -->
+    <LinearLayout
+        android:id="@+id/dialPadSection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/dialGrid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <ImageButton
+                android:id="@+id/backspaceButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_dial_button"
+                android:contentDescription="@string/cancel"
+                android:src="@android:drawable/ic_input_delete" />
+
+            <TextView
+                android:id="@+id/callButton"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_weight="1"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/bg_call_button"
+                android:gravity="center"
+                android:text="@string/call"
+                android:textColor="@color/sd_on_accent"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="48dp"
+                android:layout_height="48dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Bottom nav: TextViews, NOT Buttons (see SIM row note). 56dp, dark. -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:background="@color/sd_card"
         android:orientation="horizontal">
 
-        <Button
+        <TextView
             android:id="@+id/tabDialer"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@drawable/bg_card_selected"
             android:drawableTop="@android:drawable/ic_menu_call"
+            android:drawablePadding="2dp"
+            android:gravity="center"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
             android:text="@string/tab_dialer"
-            android:textColor="@color/sd_accent" />
+            android:textColor="@color/sd_accent"
+            android:textSize="12sp" />
 
-        <Button
+        <TextView
             android:id="@+id/tabRecents"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@drawable/bg_card"
             android:drawableTop="@android:drawable/ic_menu_recent_history"
+            android:drawablePadding="2dp"
+            android:gravity="center"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
             android:text="@string/tab_recents"
-            android:textColor="@color/sd_text" />
+            android:textColor="@color/sd_text_secondary"
+            android:textSize="12sp" />
 
-        <Button
+        <TextView
             android:id="@+id/tabContacts"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@drawable/bg_card"
             android:drawableTop="@android:drawable/ic_menu_agenda"
+            android:drawablePadding="2dp"
+            android:gravity="center"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
             android:text="@string/tab_contacts"
-            android:textColor="@color/sd_text" />
+            android:textColor="@color/sd_text_secondary"
+            android:textSize="12sp" />
 
     </LinearLayout>
 

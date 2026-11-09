@@ -1,6 +1,7 @@
 package com.mthtamim.smartdialer
 
 import android.Manifest
+import android.content.res.ColorStateList
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.telephony.PhoneStateListener
@@ -11,9 +12,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.EditText
-import android.widget.GridLayout
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.RadioButton
@@ -40,14 +39,15 @@ class MainActivity : AppCompatActivity() {
     private lateinit var providerList: RecyclerView
     private lateinit var providerAdapter: ProviderAdapter
     private lateinit var simRow: LinearLayout
-    private lateinit var sim1Button: Button
-    private lateinit var sim2Button: Button
+    private lateinit var sim1Button: TextView
+    private lateinit var sim2Button: TextView
     private lateinit var numberDisplay: TextView
     private lateinit var suggestionScroll: View
     private lateinit var suggestionRow: LinearLayout
-    private lateinit var dialGrid: GridLayout
+    private lateinit var dialGrid: LinearLayout
+    private lateinit var dialPadSection: View
     private lateinit var backspaceButton: ImageButton
-    private lateinit var callButton: Button
+    private lateinit var callButton: TextView
     private lateinit var dialerView: View
     private lateinit var recentsView: View
     private lateinit var contactsView: View
@@ -62,9 +62,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var favHeader: TextView
     private lateinit var allHeader: TextView
     private lateinit var contactsEmpty: TextView
-    private lateinit var tabDialer: Button
-    private lateinit var tabRecents: Button
-    private lateinit var tabContacts: Button
+    private lateinit var tabDialer: TextView
+    private lateinit var tabRecents: TextView
+    private lateinit var tabContacts: TextView
 
     private var telephonyManager: TelephonyManager? = null
     private var callListener: PhoneStateListener? = null
@@ -116,6 +116,7 @@ class MainActivity : AppCompatActivity() {
         suggestionScroll = findViewById(R.id.suggestionScroll)
         suggestionRow = findViewById(R.id.suggestionRow)
         dialGrid = findViewById(R.id.dialGrid)
+        dialPadSection = findViewById(R.id.dialPadSection)
         backspaceButton = findViewById(R.id.backspaceButton)
         callButton = findViewById(R.id.callButton)
         dialerView = findViewById(R.id.dialerView)
@@ -204,6 +205,15 @@ class MainActivity : AppCompatActivity() {
         sim2Button.setBackgroundResource(
             if (slot == 1) R.drawable.bg_card_selected else R.drawable.bg_card
         )
+        // Selected SIM: green text + green-stroke card. Unselected: white
+        // text on the plain dark card. (v1.0.0: both were solid green
+        // because Button backgroundTint overrode both drawables.)
+        sim1Button.setTextColor(
+            getColor(if (slot == 0) R.color.sd_accent else R.color.sd_text)
+        )
+        sim2Button.setTextColor(
+            getColor(if (slot == 1) R.color.sd_accent else R.color.sd_text)
+        )
     }
 
     // ---------- provider list ----------
@@ -258,6 +268,14 @@ class MainActivity : AppCompatActivity() {
 
     // ---------- dial pad ----------
 
+    // v1.0.1: dial pad is 4 fixed rows of fixed-size TextViews inside the
+    // dialGrid LinearLayout. v1.0.0 built plain buttons with 0x0 size and
+    // weight inside a wrap-content grid, so every button measured 0x0 and
+    // the pad was invisible on the phone. A plain button under this
+    // Material3 theme gets backgroundTint=colorPrimary (green) over its
+    // background drawable, so TextView is used deliberately here.
+    // Fixed size 64dp, 4 rows of 64dp + 8dp margins = 288dp total,
+    // always visible.
     private fun setupDialPad() {
         val keys = listOf(
             Pair("1", "অ"),
@@ -273,28 +291,38 @@ class MainActivity : AppCompatActivity() {
             Pair("0", "+"),
             Pair("#", "W")
         )
-        for (key in keys) {
-            val button = Button(this)
-            button.text = key.first + "\n" + key.second
-            button.textSize = 20f
-            button.setTextColor(getColor(R.color.sd_text))
-            button.setBackgroundResource(R.drawable.bg_dial_button)
-            button.gravity = Gravity.CENTER
-            val params = GridLayout.LayoutParams()
-            params.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f)
-            params.rowSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f)
-            params.width = 0
-            params.height = 0
-            params.setMargins(12, 12, 12, 12)
-            button.layoutParams = params
-            button.setOnClickListener { appendDigit(key.first) }
-            if (key.first == "0") {
-                button.setOnLongClickListener {
-                    appendDigit("+")
-                    true
+        val density = resources.displayMetrics.density
+        val keySize = (64 * density).toInt()
+        val marginH = (6 * density).toInt()
+        val marginV = (4 * density).toInt()
+        for (rowKeys in keys.chunked(3)) {
+            val row = LinearLayout(this)
+            row.orientation = LinearLayout.HORIZONTAL
+            row.gravity = Gravity.CENTER
+            row.layoutParams = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            for (key in rowKeys) {
+                val button = TextView(this)
+                button.text = key.first + "\n" + key.second
+                button.textSize = 18f
+                button.setTextColor(getColor(R.color.sd_text))
+                button.setBackgroundResource(R.drawable.bg_dial_button)
+                button.gravity = Gravity.CENTER
+                val params = LinearLayout.LayoutParams(keySize, keySize)
+                params.setMargins(marginH, marginV, marginH, marginV)
+                button.layoutParams = params
+                button.setOnClickListener { appendDigit(key.first) }
+                if (key.first == "0") {
+                    button.setOnLongClickListener {
+                        appendDigit("+")
+                        true
+                    }
                 }
+                row.addView(button)
             }
-            dialGrid.addView(button)
+            dialGrid.addView(row)
         }
         backspaceButton.setOnClickListener {
             if (dialled.isNotEmpty()) {
@@ -391,6 +419,9 @@ class MainActivity : AppCompatActivity() {
     private fun showTab(tab: Int) {
         currentTab = tab
         dialerView.visibility = if (tab == 0) View.VISIBLE else View.GONE
+        // Dial pad + call row live outside the weighted area and are only
+        // shown on the Dialer tab, so they can never be pushed off-screen.
+        dialPadSection.visibility = if (tab == 0) View.VISIBLE else View.GONE
         recentsView.visibility = if (tab == 1) View.VISIBLE else View.GONE
         contactsView.visibility = if (tab == 2) View.VISIBLE else View.GONE
         tabDialer.setBackgroundResource(
@@ -401,6 +432,28 @@ class MainActivity : AppCompatActivity() {
         )
         tabContacts.setBackgroundResource(
             if (tab == 2) R.drawable.bg_card_selected else R.drawable.bg_card
+        )
+        // v1.0.0: tab labels were invisible (green Button tint + clipped
+        // drawableTop text). TextViews now, selected tab green text,
+        // unselected tabs grey text on the dark card — like the preview.
+        // Icons are tinted the same way (selected green, others grey).
+        tabDialer.setTextColor(
+            getColor(if (tab == 0) R.color.sd_accent else R.color.sd_text_secondary)
+        )
+        tabRecents.setTextColor(
+            getColor(if (tab == 1) R.color.sd_accent else R.color.sd_text_secondary)
+        )
+        tabContacts.setTextColor(
+            getColor(if (tab == 2) R.color.sd_accent else R.color.sd_text_secondary)
+        )
+        tabDialer.compoundDrawableTintList = ColorStateList.valueOf(
+            getColor(if (tab == 0) R.color.sd_accent else R.color.sd_text_secondary)
+        )
+        tabRecents.compoundDrawableTintList = ColorStateList.valueOf(
+            getColor(if (tab == 1) R.color.sd_accent else R.color.sd_text_secondary)
+        )
+        tabContacts.compoundDrawableTintList = ColorStateList.valueOf(
+            getColor(if (tab == 2) R.color.sd_accent else R.color.sd_text_secondary)
         )
         if (tab == 1) {
             refreshRecents()
@@ -420,7 +473,7 @@ class MainActivity : AppCompatActivity() {
             { entry -> callVia(Providers.byId(entry.providerId)) }
         )
         recentsList.adapter = recentsAdapter
-        val clearButton = findViewById<Button>(R.id.clearRecentsButton)
+        val clearButton = findViewById<TextView>(R.id.clearRecentsButton)
         clearButton.setOnClickListener {
             Store.clearRecents(this@MainActivity)
             refreshRecents()
