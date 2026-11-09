@@ -1,1 +1,1 @@
-# Smart Dialer v1.0.1: no custom ProGuard rules needed (minify is off).
+# Smart Dialer v1.0.2: no custom ProGuard rules needed (minify is off).

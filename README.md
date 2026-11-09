@@ -2,7 +2,7 @@
 
 একটাই ডায়ালার থেকে SIM কল আর বাংলাদেশের আইপি কলিং অ্যাপগুলোতে কল — নম্বর ডায়াল করে পছন্দের প্রোভাইডারে ট্যাপ করলেই কল যাবে।
 
-**Version: v1.0.1 (versionCode 2) — dial-pad + tint fix, local code only, not pushed yet.**
+**Version: v1.0.2 (versionCode 3) — totally English UI, local code only, not pushed yet.**
 
 ## কী আছে
 
@@ -48,7 +48,7 @@ READ_CALL_LOG নেওয়া হয়নি — Recents Smart Dialer নি
 1. APK ইনস্টল করো, তিনটা পারমিশন দাও (Phone, Contacts, Phone state)
 2. নম্বর ডায়াল করে Brilliant-এ ট্যাপ করো — Brilliant ইনস্টল থাকলে নম্বরসহ খুলবে, না থাকলে Play Store খুলবে
 3. Original SIM + Auto-call ON দিয়ে কল করো — সরাসরি কল যাবে; OFF করলে ডায়ালার খুলবে
-4. একটা প্রোভাইডারে লং-প্রেস করো — ডিফল্ট হবে, কার্ডে "ডিফল্ট" লেখা আসবে
+4. একটা প্রোভাইডারে লং-প্রেস করো — ডিফল্ট হবে, কার্ডে "Default" badge আসবে
 5. কল শেষে Recents ট্যাবে দেখো — এন্ট্রি সবার উপরে, duration সহ
 6. Contacts ট্যাবে স্টার চাপো — ফেভারিট সেকশনে উঠবে
 7. নম্বর লেখার সময় সাজেশন আসে কি না দেখো
@@ -63,5 +63,6 @@ READ_CALL_LOG নেওয়া হয়নি — Recents Smart Dialer নি
 
 ## Version history
 
+- **v1.0.2 (versionCode 3) — 2026-11-09:** Totally English UI. Every user-visible Bangla string replaced with English — strings.xml (toasts, settings, Recents/Contacts, Default badge, number hint, Call button) and hardcoded strings in Kotlin (CallHelper results, installed labels, Play Store toasts). Dial pad key 1 sub-label removed (blank, like English dial pads). Layout, colours, sizes and behaviour unchanged from v1.0.1. Grep over res/ + Kotlin: 0 Bengali characters left in the UI.
 - **v1.0.1 (versionCode 2) — 2026-11-09:** ফোন-টেস্টে ধরা পড়া ভুলের ফিক্স। ডায়াল প্যাড একদম দেখা যাচ্ছিল না (GridLayout-এ 0x0 weight বাটন + প্রোভাইডার লিস্ট পুরো স্ক্রিন খেয়ে ফেলতো) — এখন ডায়াল প্যাড আর কল বাটন weighted এলাকার বাইরে, ফিক্সড 64dp বাটনে সবসময় দেখা যায়। SIM 1/2 আর নিচের ট্যাব সব সবুজ হয়ে যেতো (Material3 থিম Button-এর background-এ colorPrimary tint লাগিয়ে দিতো) — এখন ওগুলো TextView, সিলেক্ট করা SIM/ট্যাব সবুজ লেখা + সবুজ বর্ডারের কার্ড, বাকিগুলো গাঢ় কার্ডে সাদা লেখা। প্রিভিউ-ম্যাচ: কার্ডে 8dp গ্যাপ, ট্যাবের আইকনও সিলেক্টেড-সবুজ / বাকি-ধূসর, সবকিছু প্রিভিউয়ের মতো।
 - **v1.0.0 (versionCode 1) — 2026-11-09:** প্রথম ভার্সন। ৮ প্রোভাইডার, ডিফল্ট প্রোভাইডার, Recents, Contacts + ফেভারিট, কন্টাক্ট সাজেশন, SIM 1/2 বাছাই, Auto-call ON/OFF।

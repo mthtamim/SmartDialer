@@ -1,8 +1,46 @@
-# Smart Dialer v1.0.1 — pre-push validation (local, 2026-11-09)
+# Smart Dialer v1.0.2 — pre-push validation (local, 2026-11-09)
 
 Local static pass only. No Android SDK and no Gradle run exists on this
 machine, so Kotlin compilation and resource linking are NOT proven here.
 CI (JDK 21 + Gradle 8.7 + AGP 8.6.1) is the first real build.
+
+## v1.0.2: totally English UI (Tamim, 18:37, 9 Nov 2026)
+
+After v1.0.1, Tamim asked for the UI totally in English. Every
+user-visible Bangla string was replaced with English:
+
+- `strings.xml` (22 strings): Auto-call toasts, Default route/set,
+  "Enter a number first", number hint "Enter number", "Call",
+  "Search contacts", "Favourites" / "All contacts", favourite
+  added/removed, Recents/Contacts empty texts, "Clear", "Settings",
+  "Default provider", "Choose SIM (for Original SIM)", settings
+  note (IP-call limit, in English), "Save", "Cancel", "Default" badge.
+- Kotlin (22 replacements): `CallHelper` results ("Calling...",
+  "Dialer opened", "Could not open dialer", "No call permission,
+  dialer opened", IP-open / Play Store messages), installed labels
+  ("Installed" / "Not installed" / "Not verified") in `Adapters` and
+  `CallHelper`, Play Store toasts ("Play Store could not be opened").
+- Dial pad: key 1 sub-label "অ" removed (blank, like English dial
+  pads); the button text is now "1\n" — digit only.
+- Provider names and company names unchanged — proper names, already
+  English. Layout, colours, sizes and all behaviour unchanged from
+  v1.0.1: the v1.0.1 dial-pad/tint fixes are untouched.
+
+Proof: python scan of `app/src/main` for U+0980–U+09FF (includes
+Bengali digits U+09E6–U+09EF) returns **0 hits** in res/ and Kotlin.
+No Bangla remains in any user-visible string. No Bangla in code
+comments either (the scan covers comments; 0 hits total). The only
+Bangla left in the project is in README.md / VALIDATION.md history
+text (documentation for Tamim, not app UI) — and the v1.0.2 entries
+there are in English.
+
+Version consistency: `1.0.2` / `versionCode 3` in app/build.gradle,
+README version line + history, proguard comment. `1.0.1` remains only
+in history text. strings.xml: no unescaped apostrophes (new English
+strings use "does not", no contractions). All `@string` refs still
+resolve — no string name was added, removed or renamed, only values
+changed. No `.github` in the project; package, keystore and workflow
+file untouched.
 
 ## What v1.0.0 got wrong on the phone (Tamim, 18:26, 9 Nov 2026)
 

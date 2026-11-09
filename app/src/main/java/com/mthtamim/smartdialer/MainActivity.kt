@@ -278,7 +278,7 @@ class MainActivity : AppCompatActivity() {
     // always visible.
     private fun setupDialPad() {
         val keys = listOf(
-            Pair("1", "অ"),
+            Pair("1", ""),
             Pair("2", "ABC"),
             Pair("3", "DEF"),
             Pair("4", "GHI"),

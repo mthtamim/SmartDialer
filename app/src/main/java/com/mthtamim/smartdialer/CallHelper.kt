@@ -46,7 +46,7 @@ object CallHelper {
     ): CallResult {
         val number = Store.normalize(rawNumber)
         if (number.isEmpty()) {
-            return CallResult(false, "প্রথমে নম্বর লেখো")
+            return CallResult(false, "Enter a number first")
         }
         val result: CallResult = if (provider.isSim) {
             placeSimCall(context, number, autoCallOn, simSlot)
@@ -80,10 +80,10 @@ object CallHelper {
                 val dial = Intent(Intent.ACTION_DIAL, uri)
                 dial.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 context.startActivity(dial)
-                CallResult(true, "ডায়ালার খুলেছে")
+                CallResult(true, "Dialer opened")
             } catch (e: ActivityNotFoundException) {
                 Log.w(TAG, "No dialer activity", e)
-                CallResult(false, "ডায়ালার খোলা যায়নি")
+                CallResult(false, "Could not open dialer")
             }
         }
         // Auto-call ON: try the chosen SIM first, then fall back to a
@@ -97,7 +97,7 @@ object CallHelper {
                 val extras = Bundle()
                 extras.putParcelable(TelecomManager.EXTRA_PHONE_ACCOUNT_HANDLE, handle)
                 telecom.placeCall(uri, extras)
-                return CallResult(true, "কল যাচ্ছে")
+                return CallResult(true, "Calling...")
             } catch (e: SecurityException) {
                 Log.w(TAG, "placeCall needs CALL_PHONE", e)
             } catch (e: Exception) {
@@ -108,21 +108,21 @@ object CallHelper {
             val call = Intent(Intent.ACTION_CALL, uri)
             call.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             context.startActivity(call)
-            CallResult(true, "কল যাচ্ছে")
+            CallResult(true, "Calling...")
         } catch (e: SecurityException) {
             Log.w(TAG, "ACTION_CALL needs CALL_PHONE", e)
             try {
                 val dial = Intent(Intent.ACTION_DIAL, uri)
                 dial.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 context.startActivity(dial)
-                CallResult(true, "কল পারমিশন নেই, ডায়ালার খুলেছে")
+                CallResult(true, "No call permission, dialer opened")
             } catch (e2: ActivityNotFoundException) {
                 Log.w(TAG, "No dialer activity", e2)
-                CallResult(false, "ডায়ালার খোলা যায়নি")
+                CallResult(false, "Could not open dialer")
             }
         } catch (e: ActivityNotFoundException) {
             Log.w(TAG, "No dialer activity", e)
-            CallResult(false, "ডায়ালার খোলা যায়নি")
+            CallResult(false, "Could not open dialer")
         }
     }
 
@@ -164,14 +164,14 @@ object CallHelper {
             openPlaySearch(context, provider.playSearchQuery)
             return CallResult(
                 false,
-                provider.name + " অ্যাপের প্যাকেজ যাচাই হয়নি, Play Store সার্চ খুলেছে"
+                provider.name + " app package not verified, Play Store search opened"
             )
         }
         if (!isInstalled(context, pkg)) {
             openPlayDetails(context, pkg)
             return CallResult(
                 false,
-                provider.name + " ইনস্টল নেই, Play Store খুলেছে"
+                provider.name + " not installed, Play Store opened"
             )
         }
         val uri = Uri.parse("tel:" + number)
@@ -180,24 +180,24 @@ object CallHelper {
             dial.setPackage(pkg)
             dial.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             context.startActivity(dial)
-            CallResult(true, provider.name + " খুলেছে, কল চাপো")
+            CallResult(true, provider.name + " opened, press Call")
         } catch (e: ActivityNotFoundException) {
             Log.w(TAG, "IP app does not take ACTION_DIAL: " + pkg, e)
             try {
                 val launch = context.packageManager.getLaunchIntentForPackage(pkg)
                 if (launch == null) {
                     openPlayDetails(context, pkg)
-                    return CallResult(false, provider.name + " খোলা যায়নি, Play Store খুলেছে")
+                    return CallResult(false, provider.name + " could not be opened, Play Store opened")
                 }
                 launch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 context.startActivity(launch)
                 CallResult(
                     true,
-                    provider.name + " খুলেছে, নম্বরটা ওখানে লিখে কল করো"
+                    provider.name + " opened, enter the number there and call"
                 )
             } catch (e2: ActivityNotFoundException) {
                 Log.w(TAG, "IP app launch failed: " + pkg, e2)
-                CallResult(false, provider.name + " খোলা যায়নি")
+                CallResult(false, provider.name + " could not be opened")
             }
         }
     }
@@ -221,7 +221,7 @@ object CallHelper {
                 context.startActivity(web)
             } catch (e2: ActivityNotFoundException) {
                 Log.w(TAG, "No browser to open Play page", e2)
-                Toast.makeText(context, "Play Store খোলা যায়নি", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Play Store could not be opened", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -247,7 +247,7 @@ object CallHelper {
                 context.startActivity(web)
             } catch (e2: ActivityNotFoundException) {
                 Log.w(TAG, "No browser to open Play search", e2)
-                Toast.makeText(context, "Play Store খোলা যায়নি", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Play Store could not be opened", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -256,7 +256,7 @@ object CallHelper {
         if (provider.isSim) {
             return "SIM"
         }
-        val pkg = provider.packageName ?: return "যাচাই হয়নি"
-        return if (isInstalled(context, pkg)) "ইনস্টল আছে" else "ইনস্টল নেই"
+        val pkg = provider.packageName ?: return "Not verified"
+        return if (isInstalled(context, pkg)) "Installed" else "Not installed"
     }
 }

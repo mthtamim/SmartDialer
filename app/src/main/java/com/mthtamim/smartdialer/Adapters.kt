@@ -44,9 +44,9 @@ class ProviderAdapter(
         holder.status.text = if (provider.isSim) {
             "SIM"
         } else if (isInstalled(provider)) {
-            "ইনস্টল আছে"
+            "Installed"
         } else {
-            "ইনস্টল নেই"
+            "Not installed"
         }
         holder.defaultMark.visibility = if (provider.id == defaultId) {
             View.VISIBLE
